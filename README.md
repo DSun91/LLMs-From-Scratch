@@ -12,3 +12,9 @@
 ![Image Description](https://raw.githubusercontent.com/DSun91/LLMs-From-Scratch/master/Attention3.png)
 ![Image Description](https://raw.githubusercontent.com/DSun91/LLMs-From-Scratch/master/txtclass.png)
 ![Image Description](https://raw.githubusercontent.com/DSun91/LLMs-From-Scratch/master/txtclass1.png)
+
+python -m venv spacy_env
+spacy_env\Scripts\activate
+pip install jupyter spacy
+pip install ipykernel
+python -m ipykernel install --user --name=spacy_env

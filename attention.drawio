@@ -3392,7 +3392,7 @@
           <mxGeometry x="7117" y="2198.75" width="60" height="33.5" as="geometry" />
         </mxCell>
         <mxCell id="Vhbpbl9Eoq3ejO-gE9Fu-33" value="&lt;font style=&quot;font-size: 21px;&quot;&gt;$$L=-\sum y_ilog(\sigma(Z^{out}))$$&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
-          <mxGeometry x="7105" y="2562" width="200" height="30" as="geometry" />
+          <mxGeometry x="6932" y="2354" width="200" height="30" as="geometry" />
         </mxCell>
         <mxCell id="Vhbpbl9Eoq3ejO-gE9Fu-39" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
           <mxGeometry x="7304" y="2018.51" width="56" height="277.5" as="geometry" />
@@ -3439,6 +3439,15 @@
         </mxCell>
         <mxCell id="Vhbpbl9Eoq3ejO-gE9Fu-55" value="&lt;div&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;$$Z_2=\sigma(Z^{out}_1)w11 + ....$$&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="7400" y="2226.51" width="182" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Vhbpbl9Eoq3ejO-gE9Fu-58" value="&lt;div&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;$$W2$$&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="7400" y="1919" width="182" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Vhbpbl9Eoq3ejO-gE9Fu-59" value="&lt;div&gt;&lt;span style=&quot;font-size: 15px;&quot;&gt;$$W1$$&lt;/span&gt;&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="6716" y="1917" width="182" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Vhbpbl9Eoq3ejO-gE9Fu-60" value="&lt;font style=&quot;font-size: 21px;&quot;&gt;$$\frac{\partial Loss}{\partial&amp;nbsp; W_1}=\frac{\partial Loss}{\partial \sigma(Z_2)}\frac{\partial \sigma(Z_2)}{\partial&amp;nbsp; Z_2}\frac{\partial Z_2}{\partial&amp;nbsp; \sigma(Z_1)}\frac{\partial \sigma(Z_1)}{\partial&amp;nbsp; Z_1}\frac{\partial Z_1}{\partial&amp;nbsp; W_1}= [\sigma(Z_2)-y_{i}] \cdot W_2 \cdot \sigma(Z_1)[1-\sigma(Z_1)] \cdot Input$$&amp;nbsp; &amp;nbsp;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="5671" y="2488.5" width="2837" height="37" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

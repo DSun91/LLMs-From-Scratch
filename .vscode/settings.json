@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./spacy_env/Lib/site-packages"
+    ]
+}

@@ -12,7 +12,7 @@
 ![Image Description](https://raw.githubusercontent.com/DSun91/LLMs-From-Scratch/master/Attention3.png)
 ![Image Description](https://raw.githubusercontent.com/DSun91/LLMs-From-Scratch/master/txtclass.png)
 ![Image Description](https://raw.githubusercontent.com/DSun91/LLMs-From-Scratch/master/txtclass1.png)
-
+![Image Description](https://raw.githubusercontent.com/DSun91/LLMs-From-Scratch/master/TransformerModel.png)
 python -m venv spacy_env
 spacy_env\Scripts\activate
 pip install jupyter spacy

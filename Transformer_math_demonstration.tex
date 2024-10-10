@@ -1,0 +1,384 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage[paperwidth=40cm,paperheight=150cm,left=10mm,right=1cm,top=2cm,bottom=2cm]{geometry}  % Adjust margins
+\usepackage{amsmath}  % For math symbols and alignments
+\usepackage{amsfonts} % For additional math fonts
+\usepackage{amssymb}  % For symbols like \cdot
+
+\begin{document} 
+\begin{align*}
+Input^{e}&=([Input_{ohe}]^{e}_{n_{W} \times n_V } \bullet [W_{emb}]_{n_V \times n_E})+P_e \\
+Q_E&=Input^e \cdot Q_{e}; \quad K_E =Input^e \cdot K_{e}; \quad V_E=Input^e \cdot V_{e}\\
+Ec_{t1}&=Norm(\sigma(\frac{Q_{E} K_{E}^T}{\sqrt d_k})V_{E}+Input^{e})=Norm(A_{e}+Input^{e})\\
+FL_{e1}&=ReLu(Ec_{t1}*W^e_{fl_1}+b^e_{fl_1})\\
+FL_{e2}&=FL_{e1}*W^e_{fl_2}+b^e_{fl_2}\\
+Ec_{out}&=Norm(FL_{e2}+Ec_{t1})\\ \\
+Input^{d}&=([Input_{ohe}]^{d}_{n_{W} \times n_V } \bullet [W_{emb}]_{n_V \times n_E})+P_e \\
+Q_D&=Input^d \cdot Q_{d}\\
+K_D&=Input^d \cdot K_{d}\\
+V_D&=Input^d \cdot V_{d}\\
+D_{t1}&=Norm(\sigma(Mask[\frac{Q_{D} K_{D}^T}{\sqrt d_k}])V_{D}+Input^{d})=Norm(A_{mask}+Input^d)\\
+Q_C &= D_{t1} \cdot Q_{c}  \\
+K_C &= Ec_{out} \cdot K_{c} \\
+V_C &= Ec_{out} \cdot V_{c} \\
+D_{t2} &= Norm\left(\sigma\left(\frac{Q_{C} K_{C}^T}{\sqrt{d_k}}\right) V_{C} + D_{t1}\right) = Norm(A_{cr}+D_{t1}) \\ %%Dt2
+FL_{d1} &= ReLU(D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1}) \\
+FL_{d2} &= FL_{d1} \cdot W^d_{fl_2} + b^d_{fl_2} \\
+D_{out} &= Norm(FL_{d2} + D_{t2}) =\frac{(FL_{d2} + D_{t2})-\mu_{(FL_{d2} + D_{t2})}}{\sqrt{\sigma^2_{(FL_{d2} + D_{t2})}+\epsilon}}\\
+Z_{out} &= D_{out} \cdot W^o + b^o \\
+\sigma(Z^{out}) &= \sigma(D_{out} \cdot W^o + b^o) \\\\
+\\
+A_{e}&=\sigma(\frac{Q_{E} K_{E}^T}{\sqrt d_k})V_{E}
+\\
+\\
+\frac{\partial \text{Loss}}{\partial A_{e}} &= %Ae
+\frac{\partial \text{Loss}}{\partial Ec_{t1}} \cdot 
+\frac{\partial Ec_{t1}}{\partial Norm(A_{e}+Input^{e})} \cdot 
+\frac{\partial Norm(A_{e}+Input^{e})}{\partial A_{e}} 
+\\
+\frac{\partial \text{Loss}}{\partial Input^{e}_n} &= %inpute Norm
+\frac{\partial \text{Loss}}{\partial Ec_{t1}} \cdot 
+\frac{\partial Ec_{t1}}{\partial Norm(A_{e}+Input^{e})} \cdot 
+\frac{\partial Norm(A_{e}+Input^{e})}{\partial Input^{e}} 
+\\
+\frac{\partial \text{Loss}}{\partial K_{e}} &= %Ke
+\frac{\partial \text{Loss}}{\partial A_{e}} \cdot 
+\frac{\partial A_{e}}{\partial K_{E}}\cdot
+\frac{\partial K_{E}}{\partial K_{e}}=
+\frac{\partial \text{Loss}}{\partial A_{e}}\cdot
+\sigma\left(\frac{Q_{E} K_{E}^T}{\sqrt{d_k}}\right)\cdot \left[1-\sigma\left(\frac{Q_{E} K_{E}^T}{\sqrt{d_k}}\right)\right]\cdot
+\frac{Q_{E}}{\sqrt{d_k}}\cdot V_E \cdot Input^e
+\\
+\frac{\partial \text{Loss}}{\partial Q_{e}} &= %Qe
+\frac{\partial \text{Loss}}{\partial A_{e}} \cdot 
+\frac{\partial A_{e}}{\partial Q_{E}}\cdot
+\frac{\partial Q_{E}}{\partial Q_{e}}=
+\frac{\partial \text{Loss}}{\partial A_{e}}\cdot
+\sigma\left(\frac{Q_{E} K_{E}^T}{\sqrt{d_k}}\right)\cdot \left[1-\sigma\left(\frac{Q_{E} K_{E}^T}{\sqrt{d_k}}\right)\right]\cdot
+\frac{K_{E}^T}{\sqrt{d_k}}\cdot V_E \cdot Input^e
+\\
+\frac{\partial \text{Loss}}{\partial V_{e}} &= %VE
+\frac{\partial \text{Loss}}{\partial A_{e}} \cdot 
+\frac{\partial A_{e}}{\partial V_{E}}\cdot
+\frac{\partial V_{E}}{\partial V_{e}}=
+\frac{\partial \text{Loss}}{\partial A_{e}}\cdot
+\sigma\left(\frac{Q_{E} K_{E}^T}{\sqrt{d_k}}\right)
+\cdot Input^e
+\\
+\frac{\partial \text{Loss}}{\partial Input^{e}_Q} &= %input e Q
+\frac{\partial \text{Loss}}{\partial A_{e}} \cdot 
+\frac{\partial A_{e}}{\partial Q_{E}}\cdot
+\frac{\partial Q_{E}}{\partial Input^{e}}=
+\frac{\partial \text{Loss}}{\partial A_{e}}\cdot
+\sigma\left(\frac{Q_{E} K_{E}^T}{\sqrt{d_k}}\right)\cdot \left[1-\sigma\left(\frac{Q_{E} K_{E}^T}{\sqrt{d_k}}\right)\right]\cdot
+\frac{K_{E}^T}{\sqrt{d_k}}\cdot V_E \cdot Q_e
+\\
+\frac{\partial \text{Loss}}{\partial Input^{e}_K} &= %input e K
+\frac{\partial \text{Loss}}{\partial A_{e}} \cdot 
+\frac{\partial A_{e}}{\partial K_{E}}\cdot
+\frac{\partial K_{E}}{\partial Input^{e}}=
+\frac{\partial \text{Loss}}{\partial A_{e}}\cdot
+\sigma\left(\frac{Q_{E} K_{E}^T}{\sqrt{d_k}}\right)\cdot \left[1-\sigma\left(\frac{Q_{E} K_{E}^T}{\sqrt{d_k}}\right)\right]\cdot
+\frac{Q_{E}}{\sqrt{d_k}}\cdot V_E \cdot K_e
+\\
+\frac{\partial \text{Loss}}{\partial Input^{e}_V} &= %%input e V
+\frac{\partial \text{Loss}}{\partial A_{e}} \cdot 
+\frac{\partial A_{e}}{\partial V_{E}}\cdot
+\frac{\partial V_{E}}{\partial Input^{e}}=
+\frac{\partial \text{Loss}}{\partial A_{e}}\cdot
+\sigma\left(\frac{Q_{E} K_{E}^T}{\sqrt{d_k}}\right)
+\cdot V_e
+\\
+\frac{\partial \text{Loss}}{\partial Input^{e}} &= %input e Tot
+\frac{\partial \text{Loss}}{\partial Input^{e}_n}+
+\frac{\partial \text{Loss}}{\partial Input^{e}_V}+
+\frac{\partial \text{Loss}}{\partial Input^{e}_K}+
+\frac{\partial \text{Loss}}{\partial Input^{e}_Q}
+\\
+\frac{\partial \text{Loss}}{\partial W^e_{emb}} &= %% Wdemb input  
+\frac{\partial \text{Loss}}{\partial input^e} \cdot
+\frac{\partial input^e}{\partial W^e_{emb}}=
+\frac{\partial \text{Loss}}{\partial input^e} \cdot
+Input^e
+\\
+\\\\\\
+\frac{\partial \text{Loss}}{\partial FL_{e2}} &= %FLe2
+\frac{\partial \text{Loss}}{\partial Ec_{cout}}\cdot
+\frac{\partial Ec_{cout}}{\partial Norm(FL_{e2}+Ec_{t1})}\cdot
+\frac{\partial Norm(FL_{e2}+Ec_{t1})}{\partial FL_{e2}}
+\\
+\frac{\partial \text{Loss}}{\partial E^{n}c_{t1}} &= %Ect1
+\frac{\partial \text{Loss}}{\partial Ec_{cout}}\cdot
+\frac{\partial Ec_{cout}}{\partial Norm(FL_{e2}+Ec_{t1})}\cdot
+\frac{\partial Norm(FL_{e2}+Ec_{t1})}{\partial Ec_{t1}}
+\\
+\frac{\partial \text{Loss}}{\partial W^e_{fl2}} &= %We fl2
+\frac{\partial \text{Loss}}{\partial FL_{e2}}\cdot
+\frac{\partial FL_{e2}}{\partial W^e_{fl2}}=
+\frac{\partial \text{Loss}}{\partial FL_{e2}}\cdot Fl_{e1}
+\\
+\frac{\partial \text{Loss}}{\partial b^e_{fl2}} &= %be fl2
+\frac{\partial \text{Loss}}{\partial FL_{e2}}\cdot
+\frac{\partial FL_{e2}}{\partial b^e_{fl2}}=
+\frac{\partial \text{Loss}}{\partial FL_{e2}}\cdot 1
+\\ 
+\frac{\partial \text{Loss}}{\partial FL_{e1}} &= %Fl_{e1}
+\frac{\partial \text{Loss}}{\partial FL_{e2}}\cdot
+\frac{\partial FL_{e2}}{\partial FL_{e1}}=
+\frac{\partial \text{Loss}}{\partial Fl_{e2}}\cdot W^e_{fl2}
+\\
+\frac{\partial \text{Loss}}{\partial E_{ct1}} &= %E_{ct1}
+\frac{\partial \text{Loss}}{\partial FL_{e1}} \cdot
+\frac{\partial FL_{e1}}{\partial ReLu(Ec_{t1}*W^e_{fl_1}+b^e_{fl_1})} \cdot
+\frac{\partial ReLu(Ec_{t1}*W^e_{fl_1}+b^e_{fl_1})}{\partial (Ec_{t1}*W^e_{fl_1}+b^e_{fl_1})} \cdot
+\frac{\partial (Ec_{t1}*W^e_{fl_1}+b^e_{fl_1})}{\partial Ec_{t1}}=
+\frac{\partial \text{Loss}}{\partial FL_{e1}} \cdot \begin{cases}
+    W^e_{fl_1}, &  Ec_{t1}*W^e_{fl_1}+b^e_{fl_1} > 0 \\
+    0, & \text{otherwise}
+    \end{cases} \\
+\\
+\frac{\partial \text{Loss}}{\partial W^e_{fl1}} &= %W^e_{fl1}
+\frac{\partial \text{Loss}}{\partial FL_{e1}} \cdot
+\frac{\partial FL_{e1}}{\partial ReLu(Ec_{t1}*W^e_{fl_1}+b^e_{fl_1})} \cdot
+\frac{\partial ReLu(Ec_{t1}*W^e_{fl_1}+b^e_{fl_1})}{\partial (Ec_{t1}*W^e_{fl_1}+b^e_{fl_1})} \cdot
+\frac{\partial (Ec_{t1}*W^e_{fl_1}+b^e_{fl_1})}{\partial W^e_{fl1}}=
+\frac{\partial \text{Loss}}{\partial FL_{e1}} \cdot \begin{cases}
+    Ec_{t1}, &  Ec_{t1}*W^e_{fl_1}+b^e_{fl_1} > 0 \\
+    0, & \text{otherwise}
+    \end{cases} \\ 
+\\
+\frac{\partial \text{Loss}}{\partial b^e_{fl1}} &= %b^e_{fl1}
+\frac{\partial \text{Loss}}{\partial FL_{e1}} \cdot
+\frac{\partial FL_{e1}}{\partial ReLu(Ec_{t1}*W^e_{fl_1}+b^e_{fl_1})} \cdot
+\frac{\partial ReLu(Ec_{t1}*W^e_{fl_1}+b^e_{fl_1})}{\partial (Ec_{t1}*W^e_{fl_1}+b^e_{fl_1})} \cdot
+\frac{\partial (Ec_{t1}*W^e_{fl_1}+b^e_{fl_1})}{\partial b^e_{fl1}}=
+\frac{\partial \text{Loss}}{\partial FL_{e1}} \cdot \begin{cases}
+    1, &  Ec_{t1}*W^e_{fl_1}+b^e_{fl_1} > 0 \\
+    0, & \text{otherwise}
+    \end{cases} \\ 
+\\\\ \\
+\\ \\
+A_{cr}&=\sigma\left(\frac{Q_{C} K_{C}^T}{\sqrt{d_k}}\right) \cdot V_{C}
+\\ \\
+\frac{\partial \text{Loss}}{\partial A_{cr}} &= %A_cr
+\frac{\partial \text{Loss}}{\partial D_{t2}} \cdot 
+\frac{\partial D_{t2}}{\partial Norm(A_{cr}+D_{t1})} \cdot
+\frac{\partial Norm(A_{cr}+D_{t1})}{\partial (A_{cr}+D_{t1})} \cdot
+\frac{\partial  (A_{cr}+D_{t1})}{\partial A_{cr}}
+\\
+\frac{\partial \text{Loss}}{\partial D_{t1}} &= %Dt1
+\frac{\partial \text{Loss}}{\partial D_{t2}} \cdot 
+\frac{\partial D_{t2}}{\partial Norm(A_{cr}+D_{t1})} \cdot
+\frac{\partial Norm(A_{cr}+D_{t1})}{\partial (A_{cr}+D_{t1})} \cdot
+\frac{\partial  (A_{cr}+D_{t1})}{\partial D_{t1}}
+\\
+\frac{\partial \text{Loss}}{\partial D^{qc}_{t1}} &= %Dt1 qc
+\frac{\partial \text{Loss}}{\partial A_{cr}} \cdot 
+\frac{\partial A_{cr}}{\partial Q_{C}}\cdot
+\frac{\partial Q_{C}}{\partial D_{t1}}=
+\frac{\partial \text{Loss}}{\partial A_{cr}}\cdot
+\sigma\left(\frac{Q_{C} K_{C}^T}{\sqrt{d_k}}\right)\cdot \left[1-\sigma\left(\frac{Q_{C} K_{C}^T}{\sqrt{d_k}}\right)\right]\cdot
+\frac{K_{C}^T}{\sqrt{d_k}}\cdot V_C \cdot Q_{c}
+\\
+\frac{\partial \text{Loss}}{\partial Q_{c}} &= %Qc
+\frac{\partial \text{Loss}}{\partial A_{cr}} \cdot 
+\frac{\partial A_{cr}}{\partial Q_{C}}\cdot
+\frac{\partial Q_{C}}{\partial Q_{c}}=
+\frac{\partial \text{Loss}}{\partial A_{cr}}\cdot
+\sigma\left(\frac{Q_{C} K_{C}^T}{\sqrt{d_k}}\right)\cdot \left[1-\sigma\left(\frac{Q_{C} K_{C}^T}{\sqrt{d_k}}\right)\right]\cdot
+\frac{K_{C}^T}{\sqrt{d_k}}\cdot V_C \cdot D_{t1}
+\\
+\frac{\partial \text{Loss}}{\partial K_{c}} &= %Kc
+\frac{\partial \text{Loss}}{\partial A_{cr}} \cdot 
+\frac{\partial A_{cr}}{\partial K_{C}}\cdot
+\frac{\partial K_{C}}{\partial K_{c}}=
+\frac{\partial \text{Loss}}{\partial A_{cr}}\cdot
+\sigma\left(\frac{Q_{C} K_{C}^T}{\sqrt{d_k}}\right)\cdot \left[1-\sigma\left(\frac{Q_{C} K_{C}^T}{\sqrt{d_k}}\right)\right]\cdot
+\frac{Q_{C}}{\sqrt{d_k}}\cdot V_C \cdot Ec_{out}
+\\
+\frac{\partial \text{Loss}}{\partial V_{c}} &= %Vc
+\frac{\partial \text{Loss}}{\partial A_{cr}} \cdot 
+\frac{\partial A_{cr}}{\partial V_{C}}\cdot
+\frac{\partial V_{C}}{\partial V_{c}}=
+\frac{\partial \text{Loss}}{\partial A_{cr}}\cdot
+\sigma\left(\frac{Q_{C} K_{C}^T}{\sqrt{d_k}}\right)
+\cdot Ec_{out}
+\\
+\frac{\partial \text{Loss}}{\partial Ec^K_{cout}} &= %Ecout K
+\frac{\partial \text{Loss}}{\partial A_{cr}} \cdot 
+\frac{\partial A_{cr}}{\partial K_{C}}\cdot
+\frac{\partial K_{C}}{\partial Ec_{cout}}=
+\frac{\partial \text{Loss}}{\partial A_{cr}}\cdot
+\sigma\left(\frac{Q_{C} K_{C}^T}{\sqrt{d_k}}\right)\cdot \left[1-\sigma\left(\frac{Q_{C} K_{C}^T}{\sqrt{d_k}}\right)\right]\cdot
+\frac{Q_{C}}{\sqrt{d_k}}\cdot V_C \cdot K_c
+\\
+\frac{\partial \text{Loss}}{\partial Ec^V_{cout}} &= %Ecout Vc
+\frac{\partial \text{Loss}}{\partial A_{cr}} \cdot 
+\frac{\partial A_{cr}}{\partial V_{C}}\cdot
+\frac{\partial V_{C}}{\partial Ec_{cout}}=
+\frac{\partial \text{Loss}}{\partial A_{cr}}\cdot
+\sigma\left(\frac{Q_{C} K_{C}^T}{\sqrt{d_k}}\right)
+\cdot V_c
+\\
+\frac{\partial \text{Loss}}{\partial Ec_{cout}} &= %Ecout tot
+\frac{\partial \text{Loss}}{\partial Ec^K_{cout}}+
+\frac{\partial \text{Loss}}{\partial Ec^V_{cout}}
+\\\\ \\
+A_{mask}&=\sigma(Mask[\frac{Q_{D} K_{D}^T}{\sqrt d_k}])V_{D}=\sigma( \frac{Q_{D} K_{D}^T}{\sqrt d_k}+Mask)V_{D}
+\\\\
+\frac{\partial \text{Loss}}{\partial A_{mask}} &= %A_mask
+\frac{\partial \text{Loss}}{\partial D_{t1}}\cdot
+\frac{\partial D_{t1}}{\partial Norm(A_{mask}+Input^d)}\cdot
+\frac{\partial Norm(A_{mask}+Input^d)}{\partial A_{mask}}
+\\
+\frac{\partial \text{Loss}}{\partial input^d_{dt1}} &= %input_d
+\frac{\partial \text{Loss}}{\partial D_{t1}}\cdot
+\frac{\partial D_{t1}}{\partial Norm(A_{mask}+Input^d)}\cdot
+\frac{\partial Norm(A_{mask}+Input^d)}{\partial input^d}
+\\
+\frac{\partial \text{Loss}}{\partial Q_{d}} &= %QD
+\frac{\partial \text{Loss}}{\partial A_{mask}}\cdot
+\frac{\partial A_{mask}}{\partial Q_{D}} \cdot
+\frac{\partial Q_{D}}{\partial Q_{d}}=
+\frac{\partial \text{Loss}}{\partial A_{mask}} \cdot 
+\sigma( \frac{Q_{D} K_{D}^T}{\sqrt d_k}+Mask)\cdot \left[1-\sigma( \frac{Q_{D} K_{D}^T}{\sqrt d_k}+Mask)\right]\cdot 
+\frac{ K_{D}^T}{\sqrt d_k} \cdot V_{D} \cdot Input^d
+\\
+\frac{\partial \text{Loss}}{\partial K_{d}} &= %KD
+\frac{\partial \text{Loss}}{\partial A_{mask}}\cdot
+\frac{\partial A_{mask}}{\partial K_{D}} \cdot
+\frac{\partial K_{D}}{\partial K_{d}}=
+\frac{\partial \text{Loss}}{\partial A_{mask}} \cdot 
+\sigma( \frac{Q_{D} K_{D}^T}{\sqrt d_k}+Mask)\cdot \left[1-\sigma( \frac{Q_{D} K_{D}^T}{\sqrt d_k}+Mask)\right]\cdot 
+\frac{ Q_{D}}{\sqrt d_k} \cdot V_{D} \cdot Input^d
+\\
+\frac{\partial \text{Loss}}{\partial V_{d}} &= %VD
+\frac{\partial \text{Loss}}{\partial A_{mask}}\cdot
+\frac{\partial A_{mask}}{\partial V_{D}} \cdot
+\frac{\partial V_{D}}{\partial V_{d}}=
+\frac{\partial \text{Loss}}{\partial A_{mask}} \cdot 
+\sigma( \frac{Q_{D} K_{D}^T}{\sqrt d_k}+Mask)\cdot Input^d
+\\
+\frac{\partial \text{Loss}}{\partial input^q_d} &= %%input_d QD
+\frac{\partial \text{Loss}}{\partial A_{mask}}\cdot
+\frac{\partial A_{mask}}{\partial Q_{D}} \cdot
+\frac{\partial Q_{D}}{\partial input_d}=
+\frac{\partial \text{Loss}}{\partial A_{mask}} \cdot 
+\sigma( \frac{Q_{D} K_{D}^T}{\sqrt d_k}+Mask)\cdot \left[1-\sigma( \frac{Q_{D} K_{D}^T}{\sqrt d_k}+Mask)\right]\cdot 
+\frac{ K_{D}^T}{\sqrt d_k} \cdot V_{D} \cdot Q_d
+\\
+\frac{\partial \text{Loss}}{\partial input^k_d} &= %%input_d KD
+\frac{\partial \text{Loss}}{\partial A_{mask}}\cdot
+\frac{\partial A_{mask}}{\partial K_{D}} \cdot
+\frac{\partial K_{D}}{\partial input_d}=
+\frac{\partial \text{Loss}}{\partial A_{mask}} \cdot 
+\sigma( \frac{Q_{D} K_{D}^T}{\sqrt d_k}+Mask)\cdot \left[1-\sigma( \frac{Q_{D} K_{D}^T}{\sqrt d_k}+Mask)\right]\cdot 
+\frac{ Q_{D}}{\sqrt d_k} \cdot V_{D} \cdot K_d
+\\
+\frac{\partial \text{Loss}}{\partial input^v_d} &= %%input_d VD
+\frac{\partial \text{Loss}}{\partial A_{mask}}\cdot
+\frac{\partial A_{mask}}{\partial V_{D}} \cdot
+\frac{\partial V_{D}}{\partial input_d}=
+\frac{\partial \text{Loss}}{\partial A_{mask}} \cdot 
+\sigma( \frac{Q_{D} K_{D}^T}{\sqrt d_k}+Mask)\cdot V_d
+\\
+\frac{\partial \text{Loss}}{\partial input_d} &= %%input_d tot
+\frac{\partial \text{Loss}}{\partial input^q_d}+
+\frac{\partial \text{Loss}}{\partial input^k_d}+
+\frac{\partial \text{Loss}}{\partial input^v_d}+
+\frac{\partial \text{Loss}}{\partial input^d_{dt1}}
+\\
+\frac{\partial \text{Loss}}{\partial W_{emb}} &= %% Wdemb input  
+\frac{\partial \text{Loss}}{\partial input_d} \cdot
+\frac{\partial input_d}{\partial W_{emb}}=
+\frac{\partial \text{Loss}}{\partial input_d} \cdot
+Input_d
+\\\\
+\frac{\partial \text{Loss}}{\partial Z^{out}} &= \frac{\partial \text{Loss}}{\partial \sigma(Z^{out})} \cdot \frac{\partial \sigma(\partial Z^{out})}{\partial Z^{out}} = \sigma(Z^{out}_i) - y_i \\
+\frac{\partial \text{Loss}}{\partial D_{out}} &= \frac{\partial \text{Loss}}{\partial \sigma(Z^{out})} \cdot \frac{\partial \sigma(\partial Z^{out})}{\partial Z^{out}} \cdot \frac{\partial Z^{out}}{\partial D_{out}} = (\sigma(Z^{out}_i) - y_i) \cdot W^o\\
+\frac{\partial \text{Loss}}{\partial FL_{d2}} &= \frac{\partial \text{Loss}}{\partial \sigma(Z^{out})} \cdot 
+\frac{\partial \sigma(\partial Z^{out})}{\partial Z^{out}} \cdot 
+\frac{\partial Z^{out}}{\partial D_{out}} \cdot
+\frac{\partial D_{out}}{\partial Norm(FL_{d2}+D_{t2})}\cdot 
+\frac{\partial Norm(FL_{d2}+D_{t2})}{\partial FL_{d2}}
+\\\\
+\frac{\partial \text{Loss}}{\partial FL_{d1}} &= %FDL1
+\frac{\partial \text{Loss}}{\partial FL_{d2}} \cdot 
+\frac{\partial FL_{d2}}{\partial FL_{d1}}=
+\frac{\partial \text{Loss}}{\partial FL_{d2}}\cdot W^d_{fl2}\\
+\frac{\partial \text{Loss}}{\partial W^d_{fl2}} &= %W^d_{fl2}
+\frac{\partial \text{Loss}}{\partial FL_{d2}} \cdot 
+\frac{\partial FL_{d2}}{\partial W^d_{fl2}}=
+\frac{\partial \text{Loss}}{\partial FL_{d2}}\cdot FL_{d1}\\
+\frac{\partial \text{Loss}}{\partial b^d_{fl2}} &= %B^d_{fl2}
+\frac{\partial \text{Loss}}{\partial FL_{d2}} \cdot 
+\frac{\partial FL_{d2}}{\partial b^d_{fl2}}=
+\frac{\partial \text{Loss}}{\partial FL_{d2}}\cdot 1\\
+\frac{\partial \text{Loss}}{\partial D_{t2}} &= %D_{t2}
+\frac{\partial \text{Loss}}{\partial FL_{d1}} \cdot
+\frac{\partial FL_{d1}}{\partial ReLu(D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1})} \cdot
+\frac{\partial ReLu(D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1})}{\partial (D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1})} \cdot
+\frac{\partial (D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1})}{\partial D_{t2}}=
+\frac{\partial \text{Loss}}{\partial FL_{d1}} \cdot \begin{cases}
+    W^d_{fl_1}, & D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1} > 0 \\
+    0, & \text{otherwise}
+    \end{cases} 
+    \\
+\frac{\partial \text{Loss}}{\partial W_{fl1}} &= %W_{fl1}
+\frac{\partial \text{Loss}}{\partial FL_{d1}} \cdot
+\frac{\partial FL_{d1}}{\partial ReLu(D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1})} \cdot
+\frac{\partial ReLu(D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1})}{\partial (D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1})} \cdot
+\frac{\partial (D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1})}{\partial W_{fl1}}=
+\frac{\partial \text{Loss}}{\partial FL_{d1}} \cdot \begin{cases}
+    D_{t2}, & D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1} > 0 \\
+    0, & \text{otherwise}
+    \end{cases}\\
+    \frac{\partial \text{Loss}}{\partial b_{fl1}} &= %b_{fl1}
+    \frac{\partial \text{Loss}}{\partial FL_{d1}} \cdot
+    \frac{\partial FL_{d1}}{\partial ReLu(D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1})} \cdot
+    \frac{\partial ReLu(D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1})}{\partial (D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1})} \cdot
+    \frac{\partial (D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1})}{\partial b_{fl1}}=
+    \frac{\partial \text{Loss}}{\partial FL_{d1}} \cdot \begin{cases}
+        1, & D_{t2} \cdot W^d_{fl_1} + b^d_{fl_1} > 0 \\
+        0, & \text{otherwise}
+        \end{cases} 
+\\\\\\
+\frac{\partial D_{out}}{\partial FL_{d2}}&=\frac{\partial Norm(FL_{d2} + D_{t2})}{\partial FL_{d2}}=
+\frac{\partial \frac{(FL_{d2} + D_{t2})-\mu_{(FL_{d2} + D_{t2})}}{\sqrt{\sigma^2_{(FL_{d2} + D_{t2})}+\epsilon}}}{\partial FL_{d2}}\\ \\
+X&= FL_{d2} + D_{t2} ;\\ \\
+\frac{\partial D_{out}}{\partial FL_{d2}}&=
+\frac{\partial \frac{X-\mu_{(X)}}{\sqrt{\sigma^2_{(X)}+\epsilon}}}{\partial X}\cdot\frac{\partial X}{\partial FL_{d2}}\\
+\frac{\partial D_{out}}{\partial D_{t2}}&=
+\frac{\partial \frac{X-\mu_{(X)}}{\sqrt{\sigma^2_{(X)}+\epsilon}}}{\partial X}\cdot\frac{\partial X}{\partial D_{t2}}\\\\
+\frac{\partial \frac{X-\mu_{(X)}}{\sqrt{\sigma^2_{(X)}+\epsilon}}}{\partial X} &=
+\frac{\partial \frac{X-\mu_{(X)}}{\sqrt{\sigma^2_{(X)}+\epsilon}}}{\partial X}+
+\frac{\partial \frac{X-\mu_{(X)}}{\sqrt{\sigma^2_{(X)}+\epsilon}}}{\partial \mu_{(X)}}\cdot \frac{\partial \mu_{(X)}}{\partial X}+
+\frac{\partial \frac{X-\mu_{(X)}}{\sqrt{\sigma^2_{(X)}+\epsilon}}}{\partial \sigma^2_{(X)}}\cdot \frac{\partial \sigma^2_{(X)}}{\partial X}\\
+\frac{\partial \frac{X-\mu_{(X)}}{\sqrt{\sigma^2_{(X)}+\epsilon}}}{\partial X} &=\frac{1}{\sqrt{\sigma^2_{(X)}+\epsilon}}\\
+\frac{\partial \frac{X-\mu_{(X)}}{\sqrt{\sigma^2_{(X)}+\epsilon}}}{\partial \mu_{(X)}} \cdot \frac{\partial \mu_{(X)}}{\partial X } &=-\frac{1}{\sqrt{\sigma^2_{(X)}+\epsilon}}\cdot \frac{1}{N}\\\\
+\sigma^2_{(X)}&=\frac{1}{N}\sum(X-\mu_{x})^2;\quad
+\frac{\partial \sigma^2_{(X)}}{\partial X}=  \frac{2}{N}(X-\mu_{x})\cdot 1\\\\
+\frac{\partial \frac{X-\mu_{(X)}}{\sqrt{\sigma^2_{(X)}+\epsilon}}}{\partial \sigma^2_{(X)}}\cdot \frac{\partial \sigma^2_{(X)}}{\partial X}&=
+\frac{\partial}{\partial \sigma^2_{(X)}} \frac{X-\mu_{(X)}}{(\sigma^2_{(X)}+\epsilon)^{-1/2}}\cdot \frac{\partial \sigma^2_{(X)}}{\partial X}=
+-\frac{1}{2}(\sigma^2_{(X)}+\epsilon)^{-3/2}\cdot 1 \cdot (X-\mu_{(X)})\frac{\partial \sigma^2_{(X)}}{\partial X}=
+-\frac{1}{2}\frac{X-\mu_{(X)}}{(\sigma^2_{(X)}+\epsilon)^{3/2}}\cdot \frac{2}{N}(X-\mu_{x})\cdot 1=
+-\frac{1}{N}\frac{(X-\mu_{(X)})^2}{(\sigma^2_{(X)}+\epsilon)^{3/2}}\\\\
+\frac{\partial D_{out}}{\partial FL_{d2}}&=(1-\frac{1}{N}) \frac{1}{\sqrt{\sigma^2_{(X)}+\epsilon}}-\frac{1}{N}\frac{(X-\mu_{(X)})^2}{(\sigma^2_{(X)}+\epsilon)^{3/2}}=\frac{\partial D_{out}}{\partial D_{t2}} 
+\\
+\frac{\partial \text{Loss}}{\partial FL_{d2}} &= 
+\frac{\partial \text{Loss}}{\partial \sigma(Z^{out})} \cdot 
+\frac{\partial \sigma(\partial Z^{out})}{\partial Z^{out}} \cdot 
+\frac{\partial Z^{out}}{\partial D_{out}} \cdot 
+\frac{\partial D_{out}}{\partial FL_{d2}}=
+\left[\sigma(Z^{out}_i) - y_i\right] \cdot 
+W^o \cdot 
+\left[(1-\frac{1}{N}) \frac{1}{\sqrt{\sigma^2_{(X)}+\epsilon}}-\frac{1}{N}\frac{(X-\mu_{(X)})^2}{(\sigma^2_{(X)}+\epsilon)^{3/2}}\right]\\
+\frac{\partial \text{Loss}}{\partial D_{t2}} &= 
+\frac{\partial \text{Loss}}{\partial \sigma(Z^{out})} \cdot 
+\frac{\partial \sigma(\partial Z^{out})}{\partial Z^{out}} \cdot 
+\frac{\partial Z^{out}}{\partial D_{out}}\cdot 
+\frac{\partial D_{out}}{\partial D_{t2}}
+=\left[(\sigma(Z^{out}_i) - y_i\right] \cdot 
+W^o \cdot 
+\left[(1-\frac{1}{N}) \frac{1}{\sqrt{\sigma^2_{(X)}+\epsilon}}-\frac{1}{N}\frac{(X-\mu_{(X)})^2}{(\sigma^2_{(X)}+\epsilon)^{3/2}}\right]\\
+\end{align*} 
+\end{document}

@@ -4315,7 +4315,7 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="-BfBrOPfxwMkqCmD6mWV-352" value="&lt;span style=&quot;font-size: 28px;&quot;&gt;$$L=-\sum y_ilog(\sigma(Z^{out}))$$&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="1013" y="2698" width="385" height="70" as="geometry" />
+          <mxGeometry x="1013" y="2723" width="385" height="70" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.10.8)  10 OCT 2024 17:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (MiKTeX 24.4) (preloaded format=pdflatex 2024.10.8)  12 OCT 2024 19:09
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -194,13 +194,13 @@ L3 programming layer <2024-08-30>
 Here is how much of TeX's memory you used:
  2283 strings out of 473899
  33916 string characters out of 5726500
- 607963 words of memory out of 5000000
+ 618396 words of memory out of 5000000
  25175 multiletter control sequences out of 15000+600000
  562714 words of font info for 54 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,16n,65p,335b,210s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,17n,65p,318b,215s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/dials/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/dials/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex8.pfb><C:/Users/dials/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Users/dials/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi6.pfb><C:/Users/dials/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/dials/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/dials/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/dials/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/dials/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/dials/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on Transformer_math_demonstration.pdf (1 page, 127552 bytes).
+Output written on Transformer_math_demonstration.pdf (1 page, 130744 bytes).
 PDF statistics:
  56 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1728578706.64492 "c:/Users/dials/Desktop/LLMs from scratch/Transformer_math_demonstration.tex" "Transformer_math_demonstration.pdf" "Transformer_math_demonstration" 1728578707.05416 0
+["pdflatex"] 1728756560.30504 "c:/Users/dials/Desktop/LLMs from scratch/Transformer_math_demonstration.tex" "Transformer_math_demonstration.pdf" "Transformer_math_demonstration" 1728756560.69817 0
   "C:/Users/dials/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1728477355 81107 70b8516c68c2e617189c5e44bfd16b96 ""
   "C:/Users/dials/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1728416620 11948197 e777fffcee4d4c5d49b598023580264b ""
   "C:/Users/dials/AppData/Local/Programs/MiKTeX/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm" 1233951848 1004 54797486969f23fa377b128694d548df ""
@@ -45,9 +45,9 @@
   "C:/Users/dials/AppData/Local/Programs/MiKTeX/tex/latex/geometry/geometry.sty" 1578053545 42759 9cf6c5257b1bc7af01a58859749dd37a ""
   "C:/Users/dials/AppData/Local/Programs/MiKTeX/tex/latex/graphics/keyval.sty" 1718270727 2671 70891d50dac933918b827d326687c6e8 ""
   "C:/Users/dials/AppData/Local/Programs/MiKTeX/tex/latex/l3backend/l3backend-pdftex.def" 1716480499 29785 9f93ab201fe5dd053afcc6c1bcf7d266 ""
-  "Transformer_math_demonstration.aux" 1728578706 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
-  "Transformer_math_demonstration.tex" 1728578705 20853 76e85e71c85fcb8ebc83d6eff856bf85 ""
-  "c:/Users/dials/Desktop/LLMs from scratch/Transformer_math_demonstration.tex" 1728578705 20853 76e85e71c85fcb8ebc83d6eff856bf85 ""
+  "Transformer_math_demonstration.aux" 1728756560 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "Transformer_math_demonstration.tex" 1728756559 22291 45f6a1a789be4e57d783d8cabe3e46f7 ""
+  "c:/Users/dials/Desktop/LLMs from scratch/Transformer_math_demonstration.tex" 1728756559 22291 45f6a1a789be4e57d783d8cabe3e46f7 ""
   (generated)
   "Transformer_math_demonstration.aux"
   "Transformer_math_demonstration.log"
